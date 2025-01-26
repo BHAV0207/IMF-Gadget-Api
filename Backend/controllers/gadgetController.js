@@ -17,7 +17,9 @@ exports.getAllGadgets = async (req, res) => {
     }));
     res.json(gadgetsWithProbability);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({ error: "Failed to retrieve gadgets. " + err.message });
   }
 };
 
@@ -25,6 +27,9 @@ exports.getAllGadgets = async (req, res) => {
 exports.addGadget = async (req, res) => {
   try {
     const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ error: "Gadget name is required." });
+    }
     const newGadget = await Gadget.create({ name: generateRandomName() });
 
     const token = jwt.sign({ gadgetId: newGadget.id }, JWT_SECRET, {
@@ -33,7 +38,7 @@ exports.addGadget = async (req, res) => {
 
     res.status(201).json({ newGadget, token });
   } catch (err) {
-    res.status(500).json({ error: err.message + "checking this log" });
+    res.status(500).json({ error: "Failed to add gadget. " + err.message });
   }
 };
 
@@ -42,6 +47,11 @@ exports.updateGadget = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, status } = req.body;
+    if (!name && !status) {
+      return res
+        .status(400)
+        .json({ error: "Name or status is required to update." });
+    }
     const updated = await Gadget.update({ name, status }, { where: { id } });
     if (updated[0]) {
       res.json({ message: "Gadget updated successfully" });
@@ -49,7 +59,7 @@ exports.updateGadget = async (req, res) => {
       res.status(404).json({ error: "Gadget not found" });
     }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to update gadget. " + err.message });
   }
 };
 
@@ -67,7 +77,9 @@ exports.deleteGadget = async (req, res) => {
       res.status(404).json({ error: "Gadget not found" });
     }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({ error: "Failed to decommission gadget. " + err.message });
   }
 };
 
@@ -80,10 +92,13 @@ exports.selfDestruct = async (req, res) => {
       message: `Self-destruct sequence initiated for gadget ${id}. Confirmation Code: ${confirmationCode}`,
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error: "Failed to initiate self-destruct sequence. " + err.message,
+      });
   }
 };
-
 
 // STATUS
 exports.statusOfGadgets = async (req, res) => {
@@ -96,15 +111,17 @@ exports.statusOfGadgets = async (req, res) => {
         .json({ error: "Please provide a valid 'status' query parameter." });
     }
 
-    const gadgets = await Gadget.findAll({where : {status}});
+    const gadgets = await Gadget.findAll({ where: { status } });
 
     if (gadgets.length === 0) {
       return res
         .status(404)
         .json({ error: `No gadgets found with status '${status}'.` });
-    }    
+    }
     res.json(gadgets);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({ error: "Failed to retrieve gadgets by status. " + err.message });
   }
 };
