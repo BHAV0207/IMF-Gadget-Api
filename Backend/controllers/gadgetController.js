@@ -21,7 +21,7 @@ exports.getAllGadgets = async (req, res) => {
   }
 };
 
-// POST 
+// POST
 exports.addGadget = async (req, res) => {
   try {
     const { name } = req.body;
@@ -53,7 +53,7 @@ exports.updateGadget = async (req, res) => {
   }
 };
 
-// DELETE 
+// DELETE
 exports.deleteGadget = async (req, res) => {
   try {
     const { id } = req.params;
@@ -79,6 +79,31 @@ exports.selfDestruct = async (req, res) => {
     res.json({
       message: `Self-destruct sequence initiated for gadget ${id}. Confirmation Code: ${confirmationCode}`,
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+// STATUS
+exports.statusOfGadgets = async (req, res) => {
+  try {
+    const { status } = req.query;
+
+    if (!status) {
+      return res
+        .status(400)
+        .json({ error: "Please provide a valid 'status' query parameter." });
+    }
+
+    const gadgets = await Gadget.findAll({where : {status}});
+
+    if (gadgets.length === 0) {
+      return res
+        .status(404)
+        .json({ error: `No gadgets found with status '${status}'.` });
+    }    
+    res.json(gadgets);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

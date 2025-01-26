@@ -13,4 +13,7 @@ router.post(
   gadgetController.selfDestruct
 );
 
+router.get("/gadgets/status", gadgetController.statusOfGadgets);
+
+
 module.exports = router;
