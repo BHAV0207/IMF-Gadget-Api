@@ -6,7 +6,7 @@ This project is a backend service designed for managing gadgets efficiently. It 
 
 The Gadget Management Backend is built to facilitate the management of gadgets with key features like authentication using JWT tokens, Redis-based caching for optimized performance, and a unique self-destruct feature. It ensures secure and seamless operations tailored for scalable applications.
 
-**Postman Collection:** [Postman Collection Link](-----------)
+### **Postman Collection:** [Postman Collection Link](https://www.postman.com/crimson-comet-536761/new-team-workspace/collection/n0kjs2s/imf-technologies?action=share&creator=40380568)
 
 ---
 
